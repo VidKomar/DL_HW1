@@ -27,7 +27,7 @@ class Network(object):
             self.momentum_db, self.v_db = [0 for i in range(1, len(sizes))], [0 for i in range(1, len(sizes))]
             
 
-    def train(self, training_data,training_class, val_data, val_class, epochs, mini_batch_size, eta, regularization=True):
+    def train(self, training_data, training_class, val_data, val_class, epochs, mini_batch_size, eta, regularization=True):
         # training data - numpy array of dimensions [n0 x m], where m is the number of examples in the data and
         # n0 is the number of input attributes
         # training_class - numpy array of dimensions [c x m], where c is the number of classes
@@ -47,7 +47,7 @@ class Network(object):
             loss_avg = 0.0
             
             mini_batches = [
-                (training_data[:,k:k + mini_batch_size], training_class[:,k:k+mini_batch_size])
+                (training_data[:, k:k + mini_batch_size], training_class[:, k:k+mini_batch_size])
                 for k in range(0, self.n, mini_batch_size)]
 
             for mini_batch in mini_batches:
@@ -79,6 +79,7 @@ class Network(object):
             
             print("Epoch {} complete".format(j))
             print("Loss:" + str(loss_avg / len(mini_batches)))
+            
         plt.figure(1)
         plt.subplot(211)
         plt.plot(loss_eval, label = "Validation Loss")
@@ -92,7 +93,7 @@ class Network(object):
 
 
 
-    def eval_network(self, validation_data,validation_class):
+    def eval_network(self, validation_data, validation_class):
         # validation data - numpy array of dimensions [n0 x m], where m is the number of examples in the data and
         # n0 is the number of input attributes
         # validation_class - numpy array of dimensions [c x m], where c is the number of classes
@@ -100,8 +101,8 @@ class Network(object):
         loss_avg = 0.0
         tp = 0.0
         for i in range(validation_data.shape[1]):
-            example = np.expand_dims(validation_data[:,i],-1)
-            example_class = np.expand_dims(validation_class[:,i],-1)
+            example = np.expand_dims(validation_data[:,i], -1)
+            example_class = np.expand_dims(validation_class[:,i], -1)
             example_class_num = np.argmax(validation_class[:,i], axis=0)
             output, Zs, activations = self.forward_pass(example)
             output_num = np.argmax(output, axis=0)[0]
@@ -154,7 +155,7 @@ class Network(object):
         # n0 is the number of input attributes
         ########## Implement the forward pass
         
-        As = [input]
+        As = [input] # Tle določiš, da input prov list, ne pa kej druzga?
         Zs = []
         activation = input
         for w, b in zip(self.weights[:-1], self.biases[:-1]):
@@ -223,7 +224,7 @@ class Network(object):
         return dWs, dBs 
     
     
-def softmax(Z):
+def softmax(Z): # Aktivacijske funkcije <3
     expZ = np.exp(Z - np.max(Z))
     return expZ / expZ.sum(axis=0, keepdims=True)
 
@@ -231,10 +232,10 @@ def softmax_dLdZ(output, target):
     # partial derivative of the cross entropy loss w.r.t Z at the last layer
     return output - target
 
-def cross_entropy(y_true, y_pred, epsilon=1e-12, lmbd = 0.5):
+def cross_entropy(y_true, y_pred, epsilon = 1e-12, lmbd = 0.5):
     targets = y_true.transpose()
     predictions = y_pred.transpose()
-    predictions = np.clip(predictions, epsilon, 1. - epsilon)
+    predictions = np.clip(predictions, epsilon, 1. - epsilon) # Kaj že pomen ta 1. ?
     N = predictions.shape[0]
     ce = -np.sum(targets * np.log(predictions + 1e-9)) / N 
     return ce
