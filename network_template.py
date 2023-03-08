@@ -5,7 +5,8 @@ import sys
 import matplotlib.pyplot as plt
 import math
 
-## scikit 
+## scikit
+## Ej zgleda ful kul
 
 class Network(object):
     def __init__(self, sizes, optimizer="sgd"):
